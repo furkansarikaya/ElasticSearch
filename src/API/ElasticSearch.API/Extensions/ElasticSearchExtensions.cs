@@ -1,5 +1,5 @@
-using Elasticsearch.Net;
-using Nest;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 
 namespace ElasticSearch.API.Extensions;
 
@@ -9,15 +9,18 @@ public static class ElasticSearchExtensions
     {
         // Read the Elastic URL from the configuration
         var elasticUrl = configuration.GetSection("Elastic")["Url"];
+        var userName = configuration.GetSection("Elastic")["Username"];
+        var password = configuration.GetSection("Elastic")["Password"];
         if (string.IsNullOrEmpty(elasticUrl))
             throw new ArgumentException("Elastic URL is not configured properly in appsettings.json.");
 
-        // Set up connection pool and client settings
-        var pool = new SingleNodeConnectionPool(new Uri(elasticUrl));
-        var settings = new ConnectionSettings(pool);
+        var settings = new ElasticsearchClientSettings(new Uri(elasticUrl));
+        if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+        {
+            settings.Authentication(new BasicAuthentication(userName, password));
+        }
 
-        // Create and register ElasticClient as a singleton service
-        var client = new ElasticClient(settings);
+        var client = new ElasticsearchClient(settings);
         services.AddSingleton(client);
     }
 }

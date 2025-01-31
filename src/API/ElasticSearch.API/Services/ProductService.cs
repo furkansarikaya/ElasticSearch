@@ -1,7 +1,7 @@
 using System.Net;
+using Elastic.Clients.Elasticsearch;
 using ElasticSearch.API.DTOs;
 using ElasticSearch.API.Repositories;
-using Nest;
 
 namespace ElasticSearch.API.Services;
 
@@ -40,12 +40,12 @@ public class ProductService(ProductRepository productRepository, ILogger<Product
     public async Task<ResponseDto<bool>> DeleteAsync(string id)
     {
         var deleteResponse = await productRepository.DeleteAsync(id);
-        if (deleteResponse is { IsValid: false, Result: Result.NotFound })
+        if (deleteResponse is { IsValidResponse: false, Result: Result.NotFound })
             return ResponseDto<bool>.Fail("Product not found", HttpStatusCode.NotFound);
-        if (deleteResponse.IsValid) return ResponseDto<bool>.Success(true, HttpStatusCode.NoContent);
-        
-        logger.LogError(deleteResponse.OriginalException, "An error occurred while deleting the product. Error: {Error}", deleteResponse.ServerError.Error.Reason);
-        return ResponseDto<bool>.Fail("An error occurred while deleting the product", HttpStatusCode.InternalServerError);
+        if (deleteResponse.IsValidResponse) return ResponseDto<bool>.Success(true, HttpStatusCode.NoContent);
 
+        if (deleteResponse.TryGetOriginalException(out var exception))
+            logger.LogError(exception, "An error occurred while deleting the product. Error: {Error}", deleteResponse.ElasticsearchServerError?.Error.Reason);
+        return ResponseDto<bool>.Fail("An error occurred while deleting the product", HttpStatusCode.InternalServerError);
     }
 }
