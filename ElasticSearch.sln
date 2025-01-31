@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3CE42B76-1C6B-4D73-9841-6FC26FEC7E01}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{D6ABDB51-AB8F-42DA-AE0D-03C21320EA88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticSearch.API", "src\API\ElasticSearch.API\ElasticSearch.API.csproj", "{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{0C0F827D-3A0D-4A8D-A879-10FDA7DEB526}"
+	ProjectSection(SolutionItems) = preProject
+		src\Docker\docker-compose.yml = src\Docker\docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6ABDB51-AB8F-42DA-AE0D-03C21320EA88} = {3CE42B76-1C6B-4D73-9841-6FC26FEC7E01}
+		{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F} = {D6ABDB51-AB8F-42DA-AE0D-03C21320EA88}
+		{0C0F827D-3A0D-4A8D-A879-10FDA7DEB526} = {3CE42B76-1C6B-4D73-9841-6FC26FEC7E01}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C363CCFA-57F3-4C90-88A5-D6B8A0FFE81F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
