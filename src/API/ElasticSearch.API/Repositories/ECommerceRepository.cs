@@ -265,8 +265,8 @@ public class ECommerceRepository(ElasticsearchClient client)
                     .Should(queryDescriptor => queryDescriptor
                         .Match(m => m
                             .Field(f => f.CustomerFullName)
-                            .Query(customerFullName))
-                        .Prefix(p => p
+                            .Query(customerFullName)),
+                        queryDescriptor => queryDescriptor.Prefix(p => p
                             .Field(f => f.CustomerFullName.Suffix("keyword"))
                             .Value(customerFullName))))));
         
