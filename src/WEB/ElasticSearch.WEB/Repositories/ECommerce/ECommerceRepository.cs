@@ -8,9 +8,16 @@ public class ECommerceRepository(ElasticsearchClient elasticsearchClient) : IECo
 {
     private const string IndexName = "kibana_sample_data_ecommerce";
 
-    public async Task<(List<Models.ECommerce>? list, long count)> SearchAsync(ECommerceSearchViewModel searchViewModel, int page, int pageSize)
+    public async Task<(List<Models.ECommerce>? list, long count)> SearchAsync(ECommerceSearchViewModel? searchViewModel, int page, int pageSize)
     {
         List<Action<QueryDescriptor<Models.ECommerce>>> listQuery = [];
+        
+        if (searchViewModel is null)
+        {
+
+            listQuery.Add(g=>g.MatchAll(m => {}));
+            return await CalculateResultSet(page, pageSize, listQuery);
+        }
 
         if (!string.IsNullOrEmpty(searchViewModel.Category))
         {
@@ -46,9 +53,15 @@ public class ECommerceRepository(ElasticsearchClient elasticsearchClient) : IECo
 
         if (!string.IsNullOrEmpty(searchViewModel.Gender))
         {
-            listQuery.Add((q) => q.Match(m => m
+            listQuery.Add((q) => q.Term(m => m
                 .Field(f => f.CustomerGender)
-                .Query(searchViewModel.Gender)));
+                .Value(searchViewModel.Gender).CaseInsensitive()));
+        }
+
+
+        if (listQuery.Count == 0)
+        {
+            listQuery.Add(g => g.MatchAll(m => {}));
         }
         
         return await CalculateResultSet(page, pageSize, listQuery);

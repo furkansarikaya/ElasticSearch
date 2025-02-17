@@ -23,13 +23,9 @@ public class ProductRepository(ElasticsearchClient client)
     
     public async Task<ImmutableList<Product>> GetAllAsync()
     {
-        var searchRequest = new SearchRequest<Product>
-        {
-            Query = new MatchAllQuery()
-        };
         var result = await client.SearchAsync<Product>(x =>
             x.Index(IndexName)
-                .Query(searchRequest.Query));
+                .Query(q => q.MatchAll(m => {})));
 
         foreach (var hit in result.Hits) hit!.Source!.Id = hit!.Id!;
         return result.Documents.ToImmutableList();
