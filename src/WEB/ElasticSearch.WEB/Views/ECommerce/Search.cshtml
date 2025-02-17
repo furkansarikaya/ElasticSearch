@@ -37,7 +37,7 @@
             </form>
         </div>
         <div class="col-md-9">
-            @if (Model.List == null)
+            @if ((Model.List?.Count ?? 0) == 0)
             {
                 <div class="alert alert-warning">
                     <span> Kayit bulunamamistir!</span>

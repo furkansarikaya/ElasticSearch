@@ -90,14 +90,10 @@ public class ECommerceRepository(ElasticsearchClient client)
 
     public async Task<ImmutableList<ECommerce>> MatchAllQueryAsync(int size)
     {
-        var searchRequest = new SearchRequest<Product>
-        {
-            Query = new MatchAllQuery()
-        };
         var result = await client.SearchAsync<ECommerce>(s =>
             s.Index(IndexName)
                 .Size(size)
-                .Query(searchRequest.Query));
+                .Query(q => q.MatchAll(m => {})));
 
         foreach (var hit in result.Hits) hit!.Source!.Id = hit!.Id!;
         return result.Documents.ToImmutableList();
@@ -110,16 +106,11 @@ public class ECommerceRepository(ElasticsearchClient client)
         // page=3, pageSize=10 => 21-30
 
         var pageFrom = (page - 1) * pageSize;
-
-        var searchRequest = new SearchRequest<Product>
-        {
-            Query = new MatchAllQuery()
-        };
         var result = await client.SearchAsync<ECommerce>(s =>
             s.Index(IndexName)
                 .Size(pageSize)
                 .From(pageFrom)
-                .Query(searchRequest.Query));
+                .Query(q => q.MatchAll(m => {})));
         if (!result.IsValidResponse)
             return null;
         foreach (var hit in result.Hits) hit!.Source!.Id = hit!.Id!;
