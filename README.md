@@ -5,7 +5,7 @@ This project is an ASP.NET Core Web API application that interacts with ElasticS
 ## Requirements
 
 - .NET 9.0 SDK
-- NEST 7.17.5
+- Elastic.Clients.Elasticsearch 8.17.1
 
 ## Installation
 

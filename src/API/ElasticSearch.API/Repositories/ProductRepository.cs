@@ -1,11 +1,12 @@
 using System.Collections.Immutable;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 using ElasticSearch.API.DTOs;
 using ElasticSearch.API.Models;
-using Nest;
 
 namespace ElasticSearch.API.Repositories;
 
-public class ProductRepository(ElasticClient client)
+public class ProductRepository(ElasticsearchClient client)
 {
     private const string IndexName = "products";
     public async Task<Product?> SaveAsync(Product newProduct)
@@ -14,7 +15,7 @@ public class ProductRepository(ElasticClient client)
         var response = await client.IndexAsync(newProduct,x => x.Index(IndexName).Id(Guid.NewGuid().ToString()));
         
         //fast fail
-        if(!response.IsValid) return null;
+        if(!response.IsValidResponse) return null;
         
         newProduct.Id = response.Id;
         return newProduct;
@@ -22,28 +23,30 @@ public class ProductRepository(ElasticClient client)
     
     public async Task<ImmutableList<Product>> GetAllAsync()
     {
-        var result = await client.SearchAsync<Product>(x => 
+        var searchRequest = new SearchRequest<Product>
+        {
+            Query = new MatchAllQuery()
+        };
+        var result = await client.SearchAsync<Product>(x =>
             x.Index(IndexName)
-                .Query(q => 
-                    q.MatchAll()));
-        foreach (var hit in result.Hits) hit.Source.Id = hit.Id;
+                .Query(searchRequest.Query));
+
+        foreach (var hit in result.Hits) hit!.Source!.Id = hit!.Id!;
         return result.Documents.ToImmutableList();
     }
 
     public async Task<Product?> GetByIdAsync(string id)
     {
         var response = await client.GetAsync<Product>(id, x => x.Index(IndexName));
-        if (!response.IsValid) return null;
-        response.Source.Id = response.Id;
+        if (!response.IsValidResponse) return null;
+        response!.Source!.Id = response.Id;
         return response.Source;
     }
     
     public async Task<bool> UpdateAsync(ProductUpdateDto updateProduct)
     {
-        var response = await client.UpdateAsync<Product,ProductUpdateDto>(updateProduct.Id, x => x
-            .Index(IndexName)
-            .Doc(updateProduct));
-        return response.IsValid;
+        var response = await client.UpdateAsync<Product, ProductUpdateDto>(IndexName, updateProduct.Id, x => x.Doc(updateProduct));
+        return response.IsValidResponse;
     }
     
     /// <summary>

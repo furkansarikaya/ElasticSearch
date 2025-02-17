@@ -1,0 +1,101 @@
+@model SearchPageViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <form asp-action="Search" method="Get">
+
+                <div class="mb-3">
+                    <label asp-for="SearchModel.CustomerFullName" class="form-label"></label>
+                    <input asp-for="SearchModel.CustomerFullName" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SearchModel.Category" class="form-label"></label>
+                    <input asp-for="SearchModel.Category" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SearchModel.Gender" class="form-label"></label>
+                    <input asp-for="SearchModel.Gender" class="form-control" rows="3"></input>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SearchModel.OrderDateStart" class="form-label"></label>
+                    <input asp-for="SearchModel.OrderDateStart" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SearchModel.OrderDateEnd" class="form-label"></label>
+                    <input asp-for="SearchModel.OrderDateEnd" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-9">
+            @if (Model.List == null)
+            {
+                <div class="alert alert-warning">
+                    <span> Kayit bulunamamistir!</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    <span> Toplam @Model.TotalCount kayıt bulunmuştur</span>
+                </div>
+
+                <table class="table table-striped">
+
+                    <thead>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Siparis Tarihi</th>
+                        <th>Cinsiyet</th>
+                        <th>Toplam Tutar</th>
+                        <th>Kategori</th>
+                        <th>Siparis Id</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    @foreach (var item in Model.List)
+                    {
+                        <tr>
+                            <td>@item.CustomerFullName</td>
+                            <td>@item.OrderDate</td>
+                            <td>@item.CustomerGender</td>
+                            <td>@item.TaxFulTotalPrice</td>
+                            <td>@item.Category</td>
+                            <td>@item.OrderId</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="@Model.CreatePageUrl(Context.Request, 1, Model.PageSize)">First</a>
+                        </li>
+                        @for (int i = Model.StartPage(); i <= @Model.EndPage(); i++)
+                        {
+                            <li class="page-item @(Model.Page == i ? "active" : "")">
+                                <a class="page-link"
+                                   href="@Model.CreatePageUrl(Context.Request, i, Model.PageSize)">@i</a>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="@Model.CreatePageUrl(Context.Request, Model.PageLinkCount, Model.PageSize)">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
