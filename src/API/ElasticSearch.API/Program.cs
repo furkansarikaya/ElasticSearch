@@ -17,7 +17,11 @@ builder.Services.AddEndpointsApiExplorer();builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
+//Add repository to the container
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ECommerceRepository>();
+
+// Add services to the container
 builder.Services.AddScoped<ProductService>();
 
 // Configure ElasticSearch

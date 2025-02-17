@@ -30,7 +30,8 @@ public class ProductRepository(ElasticsearchClient client)
         var result = await client.SearchAsync<Product>(x =>
             x.Index(IndexName)
                 .Query(searchRequest.Query));
-        foreach (var hit in result.Hits) hit.Source.Id = hit.Id;
+
+        foreach (var hit in result.Hits) hit!.Source!.Id = hit!.Id!;
         return result.Documents.ToImmutableList();
     }
 
@@ -38,7 +39,7 @@ public class ProductRepository(ElasticsearchClient client)
     {
         var response = await client.GetAsync<Product>(id, x => x.Index(IndexName));
         if (!response.IsValidResponse) return null;
-        response.Source.Id = response.Id;
+        response!.Source!.Id = response.Id;
         return response.Source;
     }
     
